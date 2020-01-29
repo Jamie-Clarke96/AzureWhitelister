@@ -1,10 +1,12 @@
 import json
+from netaddr import *
+import pprint
 
 with open('ipsets.json') as f:
     d = json.load(f)
 
 azureService = "AzureSQL"
-region = "northeurope"
+region = "westeurope"
 
 ipsets = d['values']
 i = 0
@@ -18,9 +20,15 @@ ruleset = []
 rulename = region + "azuresqlip"
 j = 1
 for ip in ips:
-    rule = rulename + str(j) + "{" + "\n" + "startIpAddress = " + "\"" + ip + "\""  + "\n" + "endIpAddress = " + "\"" + ip + "\""  + "\n" +  "}" + "\n"
+    iprange = IPNetwork(ip)
+    ipfirst = iprange[0]
+    iplast = iprange[-1]
+
+    rule = "\t" + rulename + str(j) + " = " "{" + "\n" + "\t" + "\t" + "startIpAddress = " + "\"" + str(ipfirst) + "\""  + "\n" + "\t" + "\t" + "endIpAddress = " + "\"" + str(iplast) + "\""  + "\n" +  "}" + "\n"
     print(rule)
     j = j+1
+
+
 
 print(ruleset)
 
